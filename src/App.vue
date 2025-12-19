@@ -4,8 +4,9 @@
     <div class="layout">
       <AdSpace v-if="!isMobile" class="left-ad">Ad Space</AdSpace>
       <main class="chat-container">
-        <LoginForm v-if="!connected && !isWaiting" @connect="handleConnect" />
+        <LoginForm v-if="!connected && !isWaiting" @connect="handleConnect" :is-dark="theme === 'dark'" />
         <div v-if="isWaiting" class="loader">
+          <img src="/stranger-chat-logo.png" alt="Logo" class="loader-logo" />
           <span>Connecting as {{ username || 'Stranger' }}</span>
           <span class="dots">
             <span>.</span><span>.</span><span>.</span>
@@ -222,11 +223,20 @@ export default {
 
 .loader {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   height: 200px;
   font-size: 1.2rem;
   color: #4ecdc4;
+  gap: 1rem;
+}
+
+.loader-logo {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  object-fit: cover;
 }
 
 .dots span {

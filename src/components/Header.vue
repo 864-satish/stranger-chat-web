@@ -1,8 +1,8 @@
 <template>
   <header>
-    <img src="/stranger-chat-logo.svg" alt="Stranger Chat Logo" class="logo" />
+    <img src="/stranger-chat-logo.png" alt="Stranger Chat Logo" class="logo" />
     <div class="center-content">
-      <div class="slogan">Chat with random strangers anonymously</div>
+      <div class="slogan">Free chat - Talk with random strangers freely anonymously</div>
       <h1>Stranger Chat</h1>
       <div class="user-count" v-if="userCount > 0">{{ userCount }} online</div>
     </div>
