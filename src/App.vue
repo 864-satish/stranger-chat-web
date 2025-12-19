@@ -5,7 +5,12 @@
       <AdSpace v-if="!isMobile" class="left-ad">Ad Space</AdSpace>
       <main class="chat-container">
         <LoginForm v-if="!connected && !isWaiting" @connect="handleConnect" />
-        <div v-if="isWaiting" class="loader">Connecting to partner...</div>
+        <div v-if="isWaiting" class="loader">
+          <span>Connecting as {{ username || 'Stranger' }}</span>
+          <span class="dots">
+            <span>.</span><span>.</span><span>.</span>
+          </span>
+        </div>
         <Chat v-else-if="connected" :username="username" :partner-username="partnerUsername" :messages="messages" @send-message="sendMessage" @skip="skipChat" />
       </main>
       <AdSpace v-if="!isMobile" class="right-ad">Ad Space</AdSpace>
@@ -46,6 +51,7 @@ export default {
     const pendingUsername = ref('')
     const userCount = ref(0)
     const isWaiting = ref(false)
+    const ageConfirmed = ref(localStorage.getItem('ageConfirmed') === 'true')
     let messageId = 0
 
     window.addEventListener('resize', () => {
@@ -58,12 +64,18 @@ export default {
 
     const handleConnect = (user) => {
       pendingUsername.value = user
-      showModal.value = true
+      if (ageConfirmed.value) {
+        doConnect()
+      } else {
+        showModal.value = true
+      }
     }
 
     const doConnect = () => {
       showModal.value = false
       username.value = pendingUsername.value
+      ageConfirmed.value = true
+      localStorage.setItem('ageConfirmed', 'true')
       connect()
     }
 
@@ -215,6 +227,27 @@ export default {
   height: 200px;
   font-size: 1.2rem;
   color: #4ecdc4;
+}
+
+.dots span {
+  animation: blink 1.4s infinite both;
+}
+
+.dots span:nth-child(1) {
+  animation-delay: -0.32s;
+}
+
+.dots span:nth-child(2) {
+  animation-delay: -0.16s;
+}
+
+@keyframes blink {
+  0%, 80%, 100% {
+    opacity: 0;
+  }
+  40% {
+    opacity: 1;
+  }
 }
 
 @media (max-width: 768px) {

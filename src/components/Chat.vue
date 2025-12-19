@@ -107,7 +107,7 @@ export default {
 
 .message {
   margin-bottom: 0rem;
-  padding: 0.5rem;
+  padding: 0.25rem;
   border-radius: 8px;
   text-align: left;
 }

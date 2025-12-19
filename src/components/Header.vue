@@ -1,8 +1,11 @@
 <template>
   <header>
-    <div class="slogan">Chat with random strangers anonymously</div>
-    <h1>Stranger Chat</h1>
-    <div class="user-count" v-if="userCount > 0">{{ userCount }} online</div>
+    <img src="/stranger-chat-logo.svg" alt="Stranger Chat Logo" class="logo" />
+    <div class="center-content">
+      <div class="slogan">Chat with random strangers anonymously</div>
+      <h1>Stranger Chat</h1>
+      <div class="user-count" v-if="userCount > 0">{{ userCount }} online</div>
+    </div>
     <button @click="$emit('toggle-theme')" class="theme-toggle">{{ isDark ? '☀️' : '🌙' }}</button>
   </header>
 </template>
@@ -24,10 +27,24 @@ export default {
 <style scoped>
 header {
   display: flex;
-  flex-direction: column;
   align-items: center;
+  justify-content: space-between;
   padding: 1rem;
   background-color: rgba(0, 0, 0, 0.1);
+}
+
+.logo {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.center-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
 }
 
 .slogan {
@@ -54,9 +71,6 @@ h1 {
 }
 
 .theme-toggle {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
   background: none;
   border: none;
   font-size: 1.5rem;

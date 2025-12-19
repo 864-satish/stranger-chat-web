@@ -1,7 +1,8 @@
 <template>
   <div class="login">
     <div class="input-container">
-      <input v-model="localUsername" type="text" maxlength="12" placeholder="Enter username" class="username-input" />
+      <label for="username-input" class="username-label">UserName:</label>
+      <input id="username-input" v-model="localUsername" type="text" maxlength="12" placeholder="Enter username" class="username-input" />
       <button @click="handleConnect" :disabled="!localUsername" class="connect-btn">Connect</button>
     </div>
   </div>
@@ -13,7 +14,7 @@ export default {
   emits: ['connect'],
   data() {
     return {
-      localUsername: localStorage.getItem('strangerChatUsername') || ''
+      localUsername: localStorage.getItem('strangerChatUsername') || 'stranger'
     }
   },
   methods: {
@@ -37,6 +38,14 @@ export default {
   background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="%23ff6b6b" opacity="0.1"/></svg>') no-repeat center;
   background-size: cover;
   border-radius: 12px;
+}
+
+.username-label {
+  font-size: 1rem;
+  font-weight: bold;
+  color: #333;
+  align-self: flex-start;
+  margin-left: calc(50% - 150px);
 }
 
 .username-input {
