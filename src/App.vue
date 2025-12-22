@@ -7,12 +7,11 @@
         <LoginForm v-if="!connected && !isWaiting" @connect="handleConnect" :is-dark="theme === 'dark'" />
         <div v-if="isWaiting" class="loader">
           <img src="/stranger-chat-logo.svg" alt="Logo" class="loader-logo" />
-          <span>Connecting as {{ username || 'Stranger' }}</span>
-          <span class="dots">
-            <span>.</span><span>.</span><span>.</span>
-          </span>
+          <span>Connecting as {{ username || "Stranger" }}</span>
+          <span class="dots"> <span>.</span><span>.</span><span>.</span> </span>
         </div>
-        <Chat v-else-if="connected" :username="username" :partner-username="partnerUsername" :messages="messages" @send-message="sendMessage" @skip="skipChat" />
+        <Chat v-else-if="connected" :username="username" :partner-username="partnerUsername" :messages="messages"
+          @send-message="sendMessage" @skip="skipChat" />
       </main>
       <AdSpace v-if="!isMobile" class="right-ad">Ad Space</AdSpace>
     </div>
@@ -22,127 +21,153 @@
 </template>
 
 <script>
-import { ref } from 'vue'
-import io from 'socket.io-client'
-import Header from './components/Header.vue'
-import LoginForm from './components/LoginForm.vue'
-import Chat from './components/Chat.vue'
-import AdSpace from './components/AdSpace.vue'
-import AgeVerificationModal from './components/AgeVerificationModal.vue'
+import { ref } from "vue";
+import io from "socket.io-client";
+import Header from "./components/Header.vue";
+import LoginForm from "./components/LoginForm.vue";
+import Chat from "./components/Chat.vue";
+import AdSpace from "./components/AdSpace.vue";
+import AgeVerificationModal from "./components/AgeVerificationModal.vue";
 
 export default {
-  name: 'App',
+  name: "App",
   components: {
     Header,
     LoginForm,
     Chat,
     AdSpace,
-    AgeVerificationModal
+    AgeVerificationModal,
   },
   setup() {
-    const username = ref('')
-    const connected = ref(false)
-    const socket = ref(null)
-    const message = ref('')
-    const messages = ref([])
-    const theme = ref('dark')
-    const partnerUsername = ref('')
-    const isMobile = ref(window.innerWidth < 768)
-    const showModal = ref(false)
-    const pendingUsername = ref('')
-    const userCount = ref(0)
-    const isWaiting = ref(false)
-    const ageConfirmed = ref(localStorage.getItem('ageConfirmed') === 'true')
-    let messageId = 0
+    const username = ref("");
+    const connected = ref(false);
+    const socket = ref(null);
+    const message = ref("");
+    const messages = ref([]);
+    const theme = ref("dark");
+    const partnerUsername = ref("");
+    const isMobile = ref(window.innerWidth < 768);
+    const showModal = ref(false);
+    const pendingUsername = ref("");
+    const userCount = ref(0);
+    const isWaiting = ref(false);
+    const ageConfirmed = ref(localStorage.getItem("ageConfirmed") === "true");
+    let messageId = 0;
 
-    window.addEventListener('resize', () => {
-      isMobile.value = window.innerWidth < 768
-    })
+    window.addEventListener("resize", () => {
+      isMobile.value = window.innerWidth < 768;
+    });
 
     const toggleTheme = () => {
-      theme.value = theme.value === 'dark' ? 'light' : 'dark'
-    }
+      theme.value = theme.value === "dark" ? "light" : "dark";
+    };
 
     const handleConnect = (user) => {
-      pendingUsername.value = user
+      pendingUsername.value = user;
       if (ageConfirmed.value) {
-        doConnect()
+        doConnect();
       } else {
-        showModal.value = true
+        showModal.value = true;
       }
-    }
+    };
 
     const doConnect = () => {
-      showModal.value = false
-      username.value = pendingUsername.value
-      ageConfirmed.value = true
-      localStorage.setItem('ageConfirmed', 'true')
-      connect()
-    }
+      showModal.value = false;
+      username.value = pendingUsername.value;
+      ageConfirmed.value = true;
+      localStorage.setItem("ageConfirmed", "true");
+      connect();
+    };
 
     const cancelConnect = () => {
-      showModal.value = false
-      pendingUsername.value = ''
-    }
+      showModal.value = false;
+      pendingUsername.value = "";
+    };
 
     const connect = () => {
-      socket.value = io(import.meta.env.VITE_SOCKET_URL)
-      socket.value.on('connect', () => {
-        connected.value = true
-        socket.value.emit('join', { username: username.value })
-      })
-      socket.value.on('waiting', () => {
-        isWaiting.value = true
-        messages.value.push({ id: messageId++, text: 'Waiting for a partner...', sender: 'system' })
-      })
-      socket.value.on('matched', (data) => {
-        connected.value = true
-        isWaiting.value = false
-        partnerUsername.value = data.partnerUsername || (data.partnerId ? 'User' + data.partnerId.slice(-4) : 'Stranger')
-        messages.value.push({ id: messageId++, text: `Connected with ${partnerUsername.value}`, sender: 'system' })
-      })
-      socket.value.on('message', (data) => {
-        const text = typeof data === 'string' ? data : data.text;
-        const senderUsername = typeof data === 'string' ? partnerUsername.value : (data.senderUsername || partnerUsername.value);
-        messages.value.push({ id: messageId++, text, sender: 'partner', senderUsername })
-      })
-      socket.value.on('partnerDisconnected', () => {
-        messages.value.push({ id: messageId++, text: 'Partner disconnected', sender: 'system' })
-        connected.value = false
-        isWaiting.value = false
-        partnerUsername.value = ''
-      })
-      socket.value.on('disconnect', () => {
-        connected.value = false
-        isWaiting.value = false
-        partnerUsername.value = ''
-      })
-      socket.value.on('userCount', (data) => {
-        userCount.value = data.count
-      })
-    }
+      socket.value = io(import.meta.env.VITE_SOCKET_URL);
+      socket.value.on("connect", () => {
+        connected.value = true;
+        socket.value.emit("join", { username: username.value });
+      });
+      socket.value.on("waiting", () => {
+        isWaiting.value = true;
+        messages.value.push({
+          id: messageId++,
+          text: "Waiting for a partner...",
+          sender: "system",
+        });
+      });
+      socket.value.on("matched", (data) => {
+        connected.value = true;
+        isWaiting.value = false;
+        partnerUsername.value =
+          data.partnerUsername ||
+          (data.partnerId ? "User" + data.partnerId.slice(-4) : "Stranger");
+        messages.value.push({
+          id: messageId++,
+          text: `Connected with ${partnerUsername.value}`,
+          sender: "system",
+        });
+      });
+      socket.value.on("message", (data) => {
+        const text = typeof data === "string" ? data : data.text;
+        const senderUsername =
+          typeof data === "string"
+            ? partnerUsername.value
+            : data.senderUsername || partnerUsername.value;
+        messages.value.push({
+          id: messageId++,
+          text,
+          sender: "partner",
+          senderUsername,
+        });
+      });
+      socket.value.on("partnerDisconnected", () => {
+        messages.value.push({
+          id: messageId++,
+          text: "Partner disconnected",
+          sender: "system",
+        });
+        connected.value = false;
+        isWaiting.value = false;
+        partnerUsername.value = "";
+        // Automatically try to connect to a new partner
+        setTimeout(() => {
+          connect();
+        }, 1000);
+      });
+      socket.value.on("disconnect", () => {
+        connected.value = false;
+        isWaiting.value = false;
+        partnerUsername.value = "";
+      });
+      socket.value.on("userCount", (data) => {
+        userCount.value = data.count;
+      });
+    };
 
     const skipChat = () => {
       if (socket.value) {
-        socket.value.disconnect()
+        socket.value.disconnect();
       }
-      connected.value = false
-      isWaiting.value = false
-      partnerUsername.value = ''
-      messages.value = []
-      messageId = 0
+      connected.value = false;
+      isWaiting.value = false;
+      partnerUsername.value = "";
+      messages.value = [];
+      messageId = 0;
       // Reconnect after a short delay
       setTimeout(() => {
-        connect()
-      }, 1000)
-    }
+        connect();
+      }, 1000);
+    };
 
     const sendMessage = (msg) => {
       if (msg && socket.value) {
-        socket.value.emit('message', msg)
-        messages.value.push({ id: messageId++, text: msg, sender: 'me' })
+        socket.value.emit("message", msg);
+        messages.value.push({ id: messageId++, text: msg, sender: "me" });
       }
-    }
+    };
 
     return {
       username,
@@ -161,16 +186,16 @@ export default {
       cancelConnect,
       connect,
       sendMessage,
-      skipChat
-    }
-  }
-}
+      skipChat,
+    };
+  },
+};
 </script>
 
 <style>
 /* Global Styles */
 #app {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -252,9 +277,13 @@ export default {
 }
 
 @keyframes blink {
-  0%, 80%, 100% {
+
+  0%,
+  80%,
+  100% {
     opacity: 0;
   }
+
   40% {
     opacity: 1;
   }

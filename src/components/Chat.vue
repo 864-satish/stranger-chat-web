@@ -1,15 +1,15 @@
 <template>
   <div class="chat">
-    <p>Connected as {{ username }} with {{ partnerUsername }}</p>
     <button @click="$emit('skip')" class="skip-btn">Skip & Find New</button>
+    <div class="messages" ref="messagesContainer">
+      <div v-for="msg in messages" :key="msg.id" class="message">
+        <strong :class="msg.sender === 'me' ? 'my-username' : 'partner-username'">{{ msg.sender === 'me' ? 'You' :
+          (msg.sender === 'system' ? 'System' : (msg.senderUsername || partnerUsername)) }}:</strong> {{ msg.text }}
+      </div>
+    </div>
     <div class="message-input">
       <input v-model="localMessage" @keyup.enter="handleSend" placeholder="Type a message" class="message-field" />
       <button @click="handleSend" class="send-btn">Send</button>
-    </div>
-    <div class="messages" ref="messagesContainer">
-      <div v-for="msg in messages" :key="msg.id" class="message">
-        <strong :class="msg.sender === 'me' ? 'my-username' : 'partner-username'">{{ msg.sender === 'me' ? 'You' : (msg.sender === 'system' ? 'System' : (msg.senderUsername || partnerUsername)) }}:</strong> {{ msg.text }}
-      </div>
     </div>
   </div>
 </template>
@@ -60,9 +60,15 @@ export default {
   height: 100%;
 }
 
-.message-input {
-  display: flex;
-  gap: 0.5rem;
+.messages {
+  flex: 1;
+  overflow-y: auto;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  padding: 1rem;
+  background-color: #f5f5f5;
+  color: #222;
+  max-height: 400px;
   margin-bottom: 1rem;
 }
 
@@ -72,8 +78,18 @@ export default {
   border: 2px solid #4ecdc4;
   border-radius: 25px;
   font-size: 1rem;
-  background-color: rgba(255, 255, 255, 0.9);
-  color: #333;
+  background-color: #fff;
+  color: #222;
+}
+
+.dark .messages {
+  background-color: #181818;
+  color: #fff;
+}
+
+.dark .message-field {
+  background-color: #181818;
+  color: #fff;
 }
 
 .send-btn {
@@ -89,20 +105,6 @@ export default {
 
 .send-btn:hover {
   background-color: #45b7aa;
-}
-
-.messages {
-  flex: 1;
-  overflow-y: auto;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 8px;
-  padding: 1rem;
-  background-color: #f5f5f5;
-  max-height: 400px;
-}
-
-.dark .messages {
-  background-color: #2a2a2a;
 }
 
 .message {
