@@ -6,7 +6,7 @@
       <main class="chat-container">
         <LoginForm v-if="!connected && !isWaiting" @connect="handleConnect" :is-dark="theme === 'dark'" />
         <div v-if="isWaiting" class="loader">
-          <img src="/stranger-chat-logo.png" alt="Logo" class="loader-logo" />
+          <img src="/stranger-chat-logo.svg" alt="Logo" class="loader-logo" />
           <span>Connecting as {{ username || 'Stranger' }}</span>
           <span class="dots">
             <span>.</span><span>.</span><span>.</span>
@@ -88,7 +88,7 @@ export default {
     const connect = () => {
       socket.value = io(import.meta.env.VITE_SOCKET_URL)
       socket.value.on('connect', () => {
-        // connected.value = true  // remove this
+        connected.value = true
         socket.value.emit('join', { username: username.value })
       })
       socket.value.on('waiting', () => {
